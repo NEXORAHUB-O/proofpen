@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProofPen — Writing Process Verification & Originality Certificate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EFE8;
+    --paper-raised:#FBFAF6;
+    --ink:#22262C;
+    --ink-soft:#5B6069;
+    --hairline:#D9D5C8;
+    --brass:#A2793E;
+    --brass-soft:#EEE2C9;
+    --verified:#3F6B4C;
+    --alert:#AE4B3C;
+    --mono:'IBM Plex Mono', monospace;
+    --serif:'Source Serif 4', Georgia, serif;
+    --sans:'Inter', -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+
+  /* NAV */
+  nav.top{
+    border-bottom:1px solid var(--hairline);
+    background:var(--paper);
+    position:sticky;top:0;z-index:20;
+  }
+  nav.top .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:64px;
+  }
+  .brand{
+    font-family:var(--serif);font-weight:700;font-size:1.25rem;
+    display:flex;align-items:center;gap:8px;letter-spacing:.2px;
+  }
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--brass);display:inline-block;}
+  .navlinks{display:flex;gap:28px;font-size:.92rem;color:var(--ink-soft);}
+  .navlinks a{text-decoration:none;}
+  .navlinks a:hover{color:var(--ink);}
+
+  /* HERO */
+  header.hero{padding:76px 0 56px;border-bottom:1px solid var(--hairline);}
+  .hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:56px;align-items:center;}
+  .hero h1{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(2.1rem, 4vw, 3rem);
+    line-height:1.12;margin:0 0 20px;max-width:15ch;
+  }
+  .hero p.lede{font-size:1.08rem;color:var(--ink-soft);max-width:46ch;margin:0 0 28px;}
+  .cta-row{display:flex;gap:14px;align-items:center;}
+  .btn{
+    font-family:var(--sans);font-weight:600;font-size:.95rem;
+    padding:13px 22px;border-radius:3px;border:1px solid var(--ink);
+    background:var(--ink);color:var(--paper-raised);cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn.ghost{background:transparent;color:var(--ink);}
+  .btn.brass{background:var(--brass);border-color:var(--brass);color:#fff;}
+  .btn:focus-visible, a:focus-visible, textarea:focus-visible{outline:2px solid var(--brass);outline-offset:2px;}
+
+  /* Hero visual: a receipt-style certificate stub */
+  .stub{
+    background:var(--paper-raised);border:1px solid var(--hairline);
+    padding:22px 24px;font-family:var(--mono);font-size:.82rem;color:var(--ink-soft);
+    box-shadow:0 1px 0 var(--hairline), 0 14px 30px -20px rgba(0,0,0,.35);
+    position:relative;
+  }
+  .stub::before{
+    content:"";position:absolute;top:-1px;left:-1px;right:-1px;height:4px;
+    background:repeating-linear-gradient(90deg, var(--brass) 0 10px, transparent 10px 20px);
+  }
+  .stub .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--hairline);}
+  .stub .row:last-child{border-bottom:none;}
+  .stub .label{color:var(--ink-soft);}
+  .stub .val{color:var(--ink);font-weight:500;}
+  .stub .seal{
+    margin-top:14px;display:flex;align-items:center;gap:8px;color:var(--verified);font-weight:500;
+  }
+
+  section{padding:60px 0;}
+  h2.head{font-family:var(--serif);font-weight:600;font-size:1.7rem;margin:0 0 10px;}
+  p.sub{color:var(--ink-soft);max-width:58ch;margin:0 0 34px;}
+
+  /* AD SLOTS */
+  .ad-slot{
+    border:1px dashed var(--hairline);background:rgba(0,0,0,.015);
+    color:var(--ink-soft);font-family:var(--mono);font-size:.75rem;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:14px;
+  }
+  .ad-top{margin:0 0 0;}
+  .ad-top .wrap{padding:16px 28px;}
+  .ad-top .inner{min-height:90px;}
+  .ad-side{min-height:250px;writing-mode:horizontal-tb;}
+  .ad-footer{min-height:90px;}
+
+  /* WORKSPACE */
+  .workspace-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:28px;align-items:start;}
+  .panel{background:var(--paper-raised);border:1px solid var(--hairline);}
+  .panel-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 18px;border-bottom:1px solid var(--hairline);font-size:.85rem;
+  }
+  .rec-status{display:flex;align-items:center;gap:8px;color:var(--ink-soft);}
+  .rec-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-soft);}
+  .rec-dot.live{background:var(--alert);animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  textarea{
+    width:100%;min-height:340px;border:none;resize:vertical;
+    padding:20px;font-family:var(--serif);font-size:1.08rem;line-height:1.7;
+    color:var(--ink);background:transparent;
+  }
+  textarea:focus{outline:none;}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hairline);}
+  .stat{background:var(--paper-raised);padding:14px 16px;}
+  .stat .n{font-family:var(--mono);font-size:1.35rem;font-weight:500;}
+  .stat .l{font-size:.75rem;color:var(--ink-soft);margin-top:2px;}
+
+  .ledger{max-height:260px;overflow-y:auto;}
+  .ledger-entry{
+    display:flex;gap:10px;padding:9px 18px;font-size:.82rem;
+    border-bottom:1px solid var(--hairline);
+  }
+  .ledger-entry .t{font-family:var(--mono);color:var(--ink-soft);flex-shrink:0;}
+  .ledger-entry.warn{color:var(--alert);}
+  .ledger-empty{padding:22px 18px;color:var(--ink-soft);font-size:.85rem;}
+
+  .panel-foot{padding:16px 18px;border-top:1px solid var(--hairline);}
+
+  /* CERTIFICATE */
+  #certificate{display:none;}
+  #certificate.show{display:block;}
+  .cert-card{
+    background:var(--paper-raised);border:1px solid var(--hairline);
+    padding:40px;position:relative;
+  }
+  .cert-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;}
+  .cert-title{font-family:var(--serif);font-size:1.5rem;font-weight:600;}
+  .seal-mark{
+    width:64px;height:64px;border-radius:50%;border:2px solid var(--brass);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    color:var(--brass);font-family:var(--mono);font-size:.65rem;text-align:center;
+  }
+  .cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin-bottom:26px;}
+  .cert-field .l{font-size:.72rem;color:var(--ink-soft);margin-bottom:3px;}
+  .cert-field .v{font-family:var(--mono);font-size:.95rem;}
+  .cert-hash{
+    background:var(--paper);border:1px solid var(--hairline);padding:14px 16px;
+    font-family:var(--mono);font-size:.8rem;word-break:break-all;margin-bottom:24px;
+  }
+  .cert-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .cert-note{font-size:.8rem;color:var(--ink-soft);margin-top:22px;border-top:1px solid var(--hairline);padding-top:16px;}
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid var(--hairline);padding:22px 0;}
+  .faq-item h3{font-family:var(--serif);font-weight:600;font-size:1.05rem;margin:0 0 8px;}
+  .faq-item p{color:var(--ink-soft);margin:0;max-width:62ch;}
+
+  footer{border-top:1px solid var(--hairline);padding:40px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+  footer p{color:var(--ink-soft);font-size:.85rem;margin:0;}
+
+  @media (max-width:800px){
+    .hero-grid{grid-template-columns:1fr;}
+    .workspace-grid{grid-template-columns:1fr;}
+    .cert-grid{grid-template-columns:1fr;}
+  }
+
+  /* LEGAL & CONTACT */
+  .legal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .legal-card{background:var(--paper-raised);border:1px solid var(--hairline);padding:26px;}
+  .legal-card h3{font-family:var(--serif);font-size:1.2rem;margin:0 0 10px;}
+  .legal-card p,.legal-card li{color:var(--ink-soft);font-size:.9rem;}
+  .legal-card ul{padding-left:20px;margin-bottom:0;}
+  .contact-link{font-weight:600;color:var(--ink);text-decoration:underline;text-decoration-color:var(--brass);}
+  @media (max-width:800px){.legal-grid{grid-template-columns:1fr;}}
+
+  @media print{
+    nav, header.hero, .ad-slot, #workspace, .faq, footer, .cert-actions{display:none !important;}
+    body{background:#fff;}
+    #certificate{display:block !important;}
+  }
+</style>
+
+  <!-- SEO -->
+  <meta name="description" content="ProofPen records your writing process in the browser and generates a hash-based certificate showing typing activity, revisions, pauses, paste events, and document integrity.">
+  <meta name="keywords" content="ProofPen, writing verification, writing process, originality certificate, authorship evidence, document verification, writing history, content originality, AI writing evidence, SHA-256 certificate">
+  <meta name="author" content="Chayank Yadav">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://nexorahub-o.github.io/PROOFPEN/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ProofPen — Writing Process Verification & Originality Certificate">
+  <meta property="og:description" content="Create a browser-based record of how your writing was developed and generate a hash-based certificate for your finished document.">
+  <meta property="og:site_name" content="ProofPen">
+  <meta property="og:url" content="https://nexorahub-o.github.io/PROOFPEN/">
+
+  <!-- X / Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ProofPen — Writing Process Verification">
+  <meta name="twitter:description" content="Track your writing process and generate a hash-based originality trail certificate directly in your browser.">
+
+
+  <!-- Structured data for search engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ProofPen",
+    "url": "https://nexorahub-o.github.io/PROOFPEN/",
+    "description": "A browser-based writing process verification tool that records editing behavior and generates a hash-based certificate.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "author": {
+      "@type": "Person",
+      "name": "Chayank Yadav"
+    }
+  }
+  </script>
+
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>ProofPen</div>
+    <div class="navlinks">
+      <a href="#editor">Editor</a>
+      <a href="#certificate-section">Certificate</a>
+      <a href="#faq">How it works</a>
+      <a href="#about">About</a>
+      <a href="#legal">Legal</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>A chain of custody for your writing</h1>
+      <p class="lede">ProofPen records how a piece of writing came together — pacing, pauses, revisions, pasted text — while you work, then seals it into a certificate you can hand to an editor, client, or platform when they ask where something came from.</p>
+      <div class="cta-row">
+        <button class="btn" onclick="document.getElementById('editor').scrollIntoView()">Start a tracked session</button>
+        <a href="#faq" class="btn ghost">What this does and doesn't prove</a>
+      </div>
+    </div>
+    <div class="stub">
+      <div class="row"><span class="label">session</span><span class="val">2h 14m, 3 sittings</span></div>
+      <div class="row"><span class="label">keystrokes</span><span class="val">6,482</span></div>
+      <div class="row"><span class="label">pasted text</span><span class="val">0 events</span></div>
+      <div class="row"><span class="label">longest pause</span><span class="val">4m 02s</span></div>
+      <div class="row"><span class="label">content hash</span><span class="val">7f3a…c91e</span></div>
+      <div class="seal">● logged and sealed</div>
+    </div>
+  </div>
+</header>
+
+<div class="ad-slot ad-top">
+  <div class="wrap"><div class="inner" style="display:flex;align-items:center;justify-content:center;">Advertisement — 728×90 placement</div></div>
+</div>
+
+<section id="editor">
+  <div class="wrap">
+    <h2 class="head">Write here, or paste in what you've already drafted</h2>
+    <p class="sub">Recording starts on your first keystroke. Nothing leaves your browser — the log and the certificate are built locally, in this tab.</p>
+
+    <div class="workspace-grid" id="workspace">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="rec-status"><span class="rec-dot" id="recDot"></span><span id="recLabel">Not recording yet</span></div>
+          <span id="elapsed" style="font-family:var(--mono);color:var(--ink-soft);">00:00</span>
+        </div>
+        <textarea id="editor-area" placeholder="Start typing your draft…"></textarea>
+        <div class="panel-foot" style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:.8rem;color:var(--ink-soft);" id="wordCount">0 words</span>
+          <button class="btn brass" id="sealBtn" onclick="generateCertificate()">Seal &amp; generate certificate</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-head"><span>Live stats</span></div>
+          <div class="stat-grid">
+            <div class="stat"><div class="n" id="statKeys">0</div><div class="l">keystrokes</div></div>
+            <div class="stat"><div class="n" id="statBack">0</div><div class="l">backspaces</div></div>
+            <div class="stat"><div class="n" id="statPaste">0</div><div class="l">paste events</div></div>
+            <div class="stat"><div class="n" id="statWpm">0</div><div class="l">avg wpm</div></div>
+            <div class="stat"><div class="n" id="statPause">0</div><div class="l">pauses &gt;2.5s</div></div>
+            <div class="stat"><div class="n" id="statLongest">0s</div><div class="l">longest pause</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span>Ledger</span></div>
+          <div class="ledger" id="ledger">
+            <div class="ledger-empty">Entries will appear here once you start typing — checkpoints, pauses, and any pasted text.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certificate-section">
+  <div class="wrap">
+    <h2 class="head">Certificate</h2>
+    <p class="sub">Generate this once your draft is ready. It's a snapshot of the session's behavioral log plus a hash of the final text, so any later edit is detectable.</p>
+    <div id="certificate">
+      <div class="cert-card">
+        <div class="cert-top">
+          <div>
+            <div class="cert-title">Originality trail</div>
+            <div style="color:var(--ink-soft);font-size:.85rem;" id="certDate">—</div>
+          </div>
+          <div class="seal-mark">SEALED<br>PP-01</div>
+        </div>
+        <div class="cert-grid">
+          <div class="cert-field"><div class="l">Session duration</div><div class="v" id="cDuration">—</div></div>
+          <div class="cert-field"><div class="l">Word count</div><div class="v" id="cWords">—</div></div>
+          <div class="cert-field"><div class="l">Keystrokes / backspaces</div><div class="v" id="cKeys">—</div></div>
+          <div class="cert-field"><div class="l">Paste events / characters</div><div class="v" id="cPaste">—</div></div>
+          <div class="cert-field"><div class="l">Pauses over 2.5s</div><div class="v" id="cPauses">—</div></div>
+          <div class="cert-field"><div class="l">Longest pause</div><div class="v" id="cLongest">—</div></div>
+        </div>
+        <div class="cert-hash" id="cHash">content hash pending…</div>
+        <div class="cert-actions">
+          <button class="btn" onclick="downloadCertificate()">Download JSON</button>
+          <button class="btn ghost" onclick="copyHash()">Copy hash</button>
+          <button class="btn ghost" onclick="window.print()">Print certificate</button>
+        </div>
+        <div class="cert-note">This certificate documents editing behavior captured in this browser session. It's a behavioral record, not legal proof of authorship — treat it as one input among several when a client or platform asks how a piece was made.</div>
+      </div>
+    </div>
+    <div id="certPlaceholder" class="panel" style="padding:40px;color:var(--ink-soft);text-align:center;">
+      No certificate yet — write something in the editor above, then select "Seal &amp; generate certificate."
+    </div>
+  </div>
+</section>
+
+<div class="ad-slot ad-footer">
+  <div class="wrap"><div style="display:flex;align-items:center;justify-content:center;min-height:90px;">Advertisement — leaderboard placement</div></div>
+</div>
+
+<section id="faq">
+  <div class="wrap">
+    <h2 class="head">How it works</h2>
+    <div class="faq-item">
+      <h3>What's actually being measured</h3>
+      <p>ProofPen watches typing cadence, revision patterns, and clipboard activity while the editor is open, and turns that into a timestamped ledger and a hash of the finished text.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What this proves, and what it doesn't</h3>
+      <p>It shows that a document was drafted incrementally, in this browser, over a measurable stretch of time, with a record of any large pastes. It can't prove a human wrote every word, or that no AI tool was used elsewhere — it's evidence of process, not a verdict.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Where your text goes</h3>
+      <p>Nowhere. Tracking and hashing happen in your browser tab; nothing is uploaded. Closing or refreshing the tab clears the session, so export the certificate before you leave.</p>
+    </div>
+  </div>
+</section>
+
+
+<section id="about">
+  <div class="wrap">
+    <h2 class="head">About ProofPen</h2>
+    <p class="sub">ProofPen is a browser-based writing process tracker designed to create a transparent record of how a draft develops. It records selected editing activity during a session and creates a SHA-256 hash of the final text.</p>
+    <div class="legal-card">
+      <h3>What ProofPen is for</h3>
+      <p>ProofPen is intended as a supporting record for writers, editors, clients, educators, and platforms that want additional context about a document's creation process. It is not an authorship detector, plagiarism detector, or guarantee that a human wrote every word.</p>
+    </div>
+  </div>
+</section>
+
+<section id="legal">
+  <div class="wrap">
+    <h2 class="head">Legal</h2>
+    <p class="sub">Please read these policies before using ProofPen.</p>
+    <div class="legal-grid">
+      <div class="legal-card" id="privacy">
+        <h3>Privacy Policy</h3>
+        <p><strong>Last updated: August 31, 2026</strong></p>
+        <p>ProofPen's editor and certificate generation described on this page operate locally in your browser. The site does not intentionally upload the text you enter, the editing ledger, or generated certificate data to a server.</p>
+        <p>ProofPen uses browser-side processing to count activity and create a SHA-256 hash. Your text may remain available to the browser only while the page/session is open. Refreshing or closing the tab can clear the current session.</p>
+        <p>ProofPen does not ask for your name, account, or other personal information to use the core editor. If you contact us by email, we receive the information you choose to include in your message and use it to respond to your request.</p>
+        <p>This page may contain third-party services such as Google Fonts and advertising placements. Those services may have their own privacy practices and may process information according to their respective policies.</p>
+        <p>We may update this policy when the site's features or services change. Continued use after an update means you acknowledge the revised policy.</p>
+      </div>
+      <div class="legal-card" id="terms">
+        <h3>Terms of Use</h3>
+        <p><strong>Last updated: August 31, 2026</strong></p>
+        <p>By using ProofPen, you agree to use the service lawfully and responsibly. ProofPen is provided for informational and documentation purposes and should not be treated as legal, academic, or professional advice.</p>
+        <ul>
+          <li>You are responsible for the text and other material you enter into the editor.</li>
+          <li>You should keep your own copies of important writing and exported certificates.</li>
+          <li>Certificates are records of activity captured by the browser; they do not independently establish authorship, originality, or the absence of AI assistance.</li>
+          <li>You must not misuse ProofPen to misrepresent evidence, impersonate another person, or violate applicable laws or third-party rights.</li>
+        </ul>
+        <p>ProofPen is provided on an “as is” and “as available” basis. We do not guarantee uninterrupted operation, error-free results, or that a certificate will be accepted as evidence by a particular person or organization. To the extent permitted by law, ProofPen and its operator are not responsible for losses arising from reliance on the service or loss of locally stored session data.</p>
+      </div>
+      <div class="legal-card" id="disclaimer">
+        <h3>Disclaimer</h3>
+        <p>ProofPen does not prove who wrote a document. Its certificate summarizes browser-session behavior and the hash of the final text. A document could have been written elsewhere, copied into the editor, or assisted by external tools that ProofPen cannot observe.</p>
+        <p>Nothing on this website constitutes legal advice, a forensic finding, a plagiarism determination, or a guarantee of originality. If you need a legally or academically significant determination, consult the appropriate qualified professional or institution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2 class="head">Contact</h2>
+    <p class="sub">Questions, feedback, privacy requests, or reports about ProofPen can be sent by email.</p>
+    <div class="legal-card">
+      <h3>Get in touch</h3>
+      <p>Email: <a class="contact-link" href="mailto:chayankyadav00@gmail.com">chayankyadav00@gmail.com</a></p>
+      <p>For privacy-related requests, please include enough detail for us to understand and respond to your request. Please do not send passwords, payment-card details, or other unnecessary sensitive information.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand" style="font-size:1rem;"><span class="dot"></span>ProofPen</div>
+    <div>
+      <p>A behavioral log and hash-based certificate for creative work in progress.</p>
+      <p style="margin-top:8px;">
+        <a href="#about">About</a> ·
+        <a href="#privacy">Privacy Policy</a> ·
+        <a href="#terms">Terms</a> ·
+        <a href="#disclaimer">Disclaimer</a> ·
+        <a href="#contact">Contact</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+let tracking=false, startTime=null, lastKeyTime=null, timerId=null;
+let keystrokes=0, backspaces=0, pauses=0, longestPause=0, pasteEvents=0, pasteChars=0;
+let lastCheckpointSec=0;
+
+const area=document.getElementById('editor-area');
+const ledgerEl=document.getElementById('ledger');
+
+function fmtTime(sec){
+  sec=Math.floor(sec);
+  const m=Math.floor(sec/60).toString().padStart(2,'0');
+  const s=(sec%60).toString().padStart(2,'0');
+  return m+':'+s;
+}
+
+function addLedgerEntry(text, warn){
+  if(ledgerEl.querySelector('.ledger-empty')) ledgerEl.innerHTML='';
+  const el=document.createElement('div');
+  el.className='ledger-entry'+(warn?' warn':'');
+  const elapsed=(Date.now()-startTime)/1000;
+  el.innerHTML='<span class="t">'+fmtTime(elapsed)+'</span><span>'+text+'</span>';
+  ledgerEl.prepend(el);
+}
+
+function startTracking(){
+  tracking=true;
+  startTime=Date.now();
+  lastKeyTime=startTime;
+  document.getElementById('recDot').classList.add('live');
+  document.getElementById('recLabel').textContent='Recording';
+  timerId=setInterval(updateElapsed, 1000);
+  addLedgerEntry('session started');
+}
+
+function updateElapsed(){
+  const elapsed=(Date.now()-startTime)/1000;
+  document.getElementById('elapsed').textContent=fmtTime(elapsed);
+  if(elapsed-lastCheckpointSec>=20){
+    lastCheckpointSec=elapsed;
+    addLedgerEntry(keystrokes+' keystrokes so far, '+pasteEvents+' pastes');
+  }
+  updateStats();
+}
+
+function updateStats(){
+  const elapsedMin=Math.max((Date.now()-startTime)/60000, 1/60);
+  const words=area.value.trim().length ? area.value.trim().split(/\s+/).length : 0;
+  const wpm=Math.round(words/elapsedMin);
+  document.getElementById('statKeys').textContent=keystrokes;
+  document.getElementById('statBack').textContent=backspaces;
+  document.getElementById('statPaste').textContent=pasteEvents;
+  document.getElementById('statWpm').textContent=wpm;
+  document.getElementById('statPause').textContent=pauses;
+  document.getElementById('statLongest').textContent=Math.round(longestPause)+'s';
+  document.getElementById('wordCount').textContent=words+' words';
+}
+
+area.addEventListener('keydown', e=>{
+  if(!tracking) startTracking();
+  const now=Date.now();
+  const gap=(now-lastKeyTime)/1000;
+  if(gap>2.5 && lastKeyTime!==startTime){
+    pauses++;
+    if(gap>longestPause) longestPause=gap;
+    addLedgerEntry('paused for '+Math.round(gap)+'s');
+  }
+  lastKeyTime=now;
+  if(e.key==='Backspace' || e.key==='Delete'){
+    backspaces++;
+  } else if(e.key.length===1){
+    keystrokes++;
+  }
+  updateStats();
+});
+
+area.addEventListener('paste', e=>{
+  if(!tracking) startTracking();
+  const text=(e.clipboardData || window.clipboardData).getData('text');
+  pasteEvents++;
+  pasteChars+=text.length;
+  addLedgerEntry('pasted '+text.length+' characters', true);
+  updateStats();
+});
+
+async function sha256(text){
+  const enc=new TextEncoder().encode(text);
+  const buf=await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+let lastCertificate=null;
+
+async function generateCertificate(){
+  if(!area.value.trim()){
+    alert("Write something first — there's no session to certify yet.");
+    return;
+  }
+  const elapsedSec=tracking ? (Date.now()-startTime)/1000 : 0;
+  const hash=await sha256(area.value);
+  const words=area.value.trim().split(/\s+/).length;
+
+  lastCertificate={
+    generatedAt: new Date().toISOString(),
+    durationSeconds: Math.round(elapsedSec),
+    wordCount: words,
+    keystrokes: keystrokes,
+    backspaces: backspaces,
+    pasteEvents: pasteEvents,
+    pasteCharacters: pasteChars,
+    pausesOver2_5s: pauses,
+    longestPauseSeconds: Math.round(longestPause),
+    contentHashSha256: hash
+  };
+
+  document.getElementById('certDate').textContent='Generated '+new Date().toLocaleString();
+  document.getElementById('cDuration').textContent=fmtTime(elapsedSec);
+  document.getElementById('cWords').textContent=words;
+  document.getElementById('cKeys').textContent=keystrokes+' / '+backspaces;
+  document.getElementById('cPaste').textContent=pasteEvents+' / '+pasteChars+' chars';
+  document.getElementById('cPauses').textContent=pauses;
+  document.getElementById('cLongest').textContent=Math.round(longestPause)+'s';
+  document.getElementById('cHash').textContent=hash;
+
+  document.getElementById('certificate').classList.add('show');
+  document.getElementById('certPlaceholder').style.display='none';
+  document.getElementById('certificate-section').scrollIntoView({behavior:'smooth'});
+}
+
+function downloadCertificate(){
+  if(!lastCertificate) return;
+  const blob=new Blob([JSON.stringify(lastCertificate, null, 2)], {type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='proofpen-certificate.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyHash(){
+  if(!lastCertificate) return;
+  navigator.clipboard.writeText(lastCertificate.contentHashSha256);
+}
+</script>
+</body>
+</html>
